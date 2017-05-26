@@ -2,24 +2,27 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 
-import classificator.Classification;
 import excelGenerator.ExcelGenerator;
 import factory.FactoryParticle;
+import thread.ThreadManager;
 
-public class PSO {
+public class PSO implements Observer {
 
 	private List<Particle> population;
 	private int currentIndexParticleUpdate = 0;
 	private int limiteThread = 4, countThreadCurrent = 0, countParticleProcessed = 0;
-	private Classification classifier;
 	private int maxInteration, currentInteration = 0;
 	private long startTime;
 	private ExcelGenerator excelGenerator;
+	private int seed = new Random().nextInt();
+	private ThreadManager threadManager = new ThreadManager(this);
 
-	public PSO(int sizePopulation, int maxInteration2, int experiment, Classification classifier) throws Exception {
+	public PSO(int sizePopulation, int maxInteration2, int experiment) throws Exception {
 
-		this.classifier = classifier;
 		excelGenerator = new ExcelGenerator("ExperimentoPSO" + experiment);
 		ParticleToExcel.createLabelExcel(excelGenerator);
 		FactoryParticle factoryParticle = FactoryParticle.getInstace();
@@ -33,6 +36,17 @@ public class PSO {
 		updateParticle();
 	}
 
+	public void update(Observable arg0, Object arg1) {
+		try {
+			if (arg1 == "Classified")
+				finishUpdate();
+			else if (arg1 == "Created")
+				updateParticle();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public synchronized void finishUpdate() throws Exception {
 		countThreadCurrent--;
 		countParticleProcessed++;
@@ -40,42 +54,29 @@ public class PSO {
 	}
 
 	public synchronized void updateParticle() throws Exception {
-
-		if (countParticleProcessed < population.size())
-			while (countThreadCurrent < limiteThread) {
-				countThreadCurrent++;
-				new Thread(new Runnable() {
-					public void run() {
-						try {
-							Update.updateParticle(population.get(currentIndexParticleUpdate), classifier);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}).start();
-				currentIndexParticleUpdate++;
-			}
-
-		else if (countThreadCurrent == 0) {
+		if (countParticleProcessed < population.size() && countThreadCurrent < limiteThread) {
+			currentIndexParticleUpdate++;
+			countThreadCurrent++;
+			System.out.println(currentIndexParticleUpdate);
+			threadManager.updateParticleThread(population, currentIndexParticleUpdate, seed);
+		} else if (countThreadCurrent == 0) {
 			if (currentInteration < maxInteration) {
 				Update.updatePopulation(population);
 				long totalTime = System.currentTimeMillis() - startTime;
-				ParticleToExcel.updateExcelByGeneration(excelGenerator, population, currentInteration, totalTime,
-						classifier.getSeed());
+				ParticleToExcel.updateExcelByGeneration(excelGenerator, population, currentInteration, totalTime, seed);
 				currentIndexParticleUpdate = 0;
 				currentInteration++;
+				System.out.println("Interação:" + currentInteration);
 			} else {
 				excelGenerator.saveFile();
+				System.out.println("Fim do algoritmo");
 			}
 		}
-
 	}
 
 	public static void main(String[] args) throws Exception {
-
-		int sizePopulation = 10, maxInteration = 100, repetition = 10;
-		new PSO(sizePopulation, maxInteration, 1, new Classification());
-
+		int sizePopulation = 10, maxInteration = 20, repetition = 10;
+		new PSO(sizePopulation, maxInteration, 1);
 	}
 
 }

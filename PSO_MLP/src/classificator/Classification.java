@@ -71,7 +71,7 @@ public final class Classification {
 
 	}
 
-	public Classification() throws Exception {
+	public Classification(int seed) throws Exception {
 		if (dataAll == null) {
 			dataAll = new DataSource(baseCurrent).getDataSet();
 		}
