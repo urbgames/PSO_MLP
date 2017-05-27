@@ -27,6 +27,8 @@ public class Particle implements Comparable<Particle> {
 			else
 				this.position[i] = Math.random();
 		}
+		
+		System.out.println("fim");
 	}
 
 	public double[] getpBest() {

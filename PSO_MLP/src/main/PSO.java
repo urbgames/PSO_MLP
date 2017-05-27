@@ -14,7 +14,7 @@ public class PSO implements Observer {
 
 	private List<Particle> population;
 	private int currentIndexParticleUpdate = 0;
-	private int limiteThread = 4, countThreadCurrent = 0, countParticleProcessed = 0;
+	private int limiteThread = Runtime.getRuntime().availableProcessors(), countThreadCurrent = 0;
 	private int maxInteration, currentInteration = 0;
 	private long startTime;
 	private ExcelGenerator excelGenerator;
@@ -49,24 +49,27 @@ public class PSO implements Observer {
 
 	public synchronized void finishUpdate() throws Exception {
 		countThreadCurrent--;
-		countParticleProcessed++;
 		updateParticle();
 	}
 
 	public synchronized void updateParticle() throws Exception {
-		if (countParticleProcessed < population.size() && countThreadCurrent < limiteThread) {
+		System.out.println("Thread atuando: " + countThreadCurrent);
+		if (currentIndexParticleUpdate < population.size() && countThreadCurrent < limiteThread) {
 			currentIndexParticleUpdate++;
 			countThreadCurrent++;
-			System.out.println(currentIndexParticleUpdate);
-			threadManager.updateParticleThread(population, currentIndexParticleUpdate, seed);
+			System.out.println("Index particle: " + (currentIndexParticleUpdate - 1));
+			threadManager.updateParticleThread(population, currentIndexParticleUpdate - 1, seed);
+			
 		} else if (countThreadCurrent == 0) {
 			if (currentInteration < maxInteration) {
 				Update.updatePopulation(population);
 				long totalTime = System.currentTimeMillis() - startTime;
 				ParticleToExcel.updateExcelByGeneration(excelGenerator, population, currentInteration, totalTime, seed);
+				startTime = System.currentTimeMillis();
 				currentIndexParticleUpdate = 0;
 				currentInteration++;
 				System.out.println("Interação:" + currentInteration);
+				updateParticle();
 			} else {
 				excelGenerator.saveFile();
 				System.out.println("Fim do algoritmo");
@@ -75,7 +78,7 @@ public class PSO implements Observer {
 	}
 
 	public static void main(String[] args) throws Exception {
-		int sizePopulation = 10, maxInteration = 20, repetition = 10;
+		int sizePopulation = 10, maxInteration = 10, repetition = 10;
 		new PSO(sizePopulation, maxInteration, 1);
 	}
 

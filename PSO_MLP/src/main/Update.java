@@ -8,7 +8,7 @@ import classificator.ResultClassification;
 
 public class Update {
 
-	private final static double VELOCITYCOEFFICIENT = 2;
+	private final static double VELOCITYCOEFFICIENT = 0.1;
 
 	public static void updateParticle(Particle particle, Classification classifier) throws Exception {
 
@@ -19,8 +19,10 @@ public class Update {
 			pVelocities[i] = weight * particle.getVelocity()[i]
 					+ VELOCITYCOEFFICIENT * Math.random() * (particle.getpBest()[i] - particle.getPosition()[i])
 					+ VELOCITYCOEFFICIENT * Math.random() * (particle.getgBest()[i] - particle.getPosition()[i]);
+
 			double position = particle.getPosition()[i] + pVelocities[i];
 
+			position = Math.abs(position);
 			if (i == 0 || i == 1) {
 				if (position > 1)
 					position = 1;
