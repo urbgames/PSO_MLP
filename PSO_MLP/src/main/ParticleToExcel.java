@@ -14,10 +14,10 @@ public class ParticleToExcel {
 		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getFitnessgBest(), Cell.CELL_TYPE_NUMERIC);
 		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getgBestFAR(), Cell.CELL_TYPE_NUMERIC);
 		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getgBestFRR(), Cell.CELL_TYPE_NUMERIC);
-		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getLearningRate(), Cell.CELL_TYPE_NUMERIC);
-		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getMomentum(), Cell.CELL_TYPE_NUMERIC);
+		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getgBest()[0], Cell.CELL_TYPE_NUMERIC);
+		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getgBest()[1], Cell.CELL_TYPE_NUMERIC);
 		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getErrorMLP(), Cell.CELL_TYPE_NUMERIC);
-		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).geTrainingTime(), Cell.CELL_TYPE_NUMERIC);
+		excelGenerator.insertCellInfo(interation + 1, row++, population.get(0).getgBest()[2], Cell.CELL_TYPE_NUMERIC);
 		excelGenerator.insertCellInfo(interation + 1, row++, seed, Cell.CELL_TYPE_NUMERIC);
 		excelGenerator.insertCellInfo(interation + 1, row++, totalTime, Cell.CELL_TYPE_NUMERIC);
 	}
