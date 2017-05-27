@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Particle implements Comparable<Particle> {
 
 	private double pBest[], gBest[], position[], velocity[];
-	private double errorMLP, fitness, fitnesspBest, fitnessgBest, FAR, FRR, gBestFAR, gBestFRR;
+	private double errorMLP, fitness, fitnesspBest, fitnessgBest, FAR, FRR, gBestFAR, gBestFRR, pctCorrect, pctCorrectgBest;
 	private int size;
 
 	public Particle(int size) {
@@ -27,8 +27,7 @@ public class Particle implements Comparable<Particle> {
 			else
 				this.position[i] = Math.random();
 		}
-		
-		System.out.println("fim");
+
 	}
 
 	public double[] getpBest() {
@@ -155,6 +154,22 @@ public class Particle implements Comparable<Particle> {
 
 	public void setErrorMLP(double errorMLP) {
 		this.errorMLP = errorMLP;
+	}
+
+	public double getPctCorrect() {
+		return pctCorrect;
+	}
+
+	public void setPctCorrect(double pctCorrect) {
+		this.pctCorrect = pctCorrect;
+	}
+
+	public double getPctCorrectgBest() {
+		return pctCorrectgBest;
+	}
+
+	public void setPctCorrectgBest(double pctCorrectgBest) {
+		this.pctCorrectgBest = pctCorrectgBest;
 	}
 
 }

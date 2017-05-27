@@ -20,10 +20,17 @@ public class PSO implements Observer {
 	private ExcelGenerator excelGenerator;
 	private int seed = new Random().nextInt();
 	private ThreadManager threadManager = new ThreadManager(this);
+	private int maxRepetition = 0, currentRepetition = 0;
 
-	public PSO(int sizePopulation, int maxInteration2, int experiment) throws Exception {
+	public PSO(int sizePopulation, int maxInteration2, int maxRepetition, int... repetition) throws Exception {
+		this.maxRepetition = maxRepetition;
 
-		excelGenerator = new ExcelGenerator("ExperimentoPSO" + experiment);
+		if (repetition.length == 0)
+			this.currentRepetition = 0;
+		else
+			this.currentRepetition = repetition[0];
+
+		excelGenerator = new ExcelGenerator("ExperimentoPSO" + this.currentRepetition);
 		ParticleToExcel.createLabelExcel(excelGenerator);
 		FactoryParticle factoryParticle = FactoryParticle.getInstace();
 		maxInteration = maxInteration2;
@@ -59,7 +66,7 @@ public class PSO implements Observer {
 			countThreadCurrent++;
 			System.out.println("Index particle: " + (currentIndexParticleUpdate - 1));
 			threadManager.updateParticleThread(population, currentIndexParticleUpdate - 1, seed);
-			
+
 		} else if (countThreadCurrent == 0) {
 			if (currentInteration < maxInteration) {
 				Update.updatePopulation(population);
@@ -72,14 +79,17 @@ public class PSO implements Observer {
 				updateParticle();
 			} else {
 				excelGenerator.saveFile();
+				this.currentRepetition++;
+				if (this.currentRepetition < this.maxInteration)
+					new PSO(population.size(), maxInteration, maxRepetition, this.currentRepetition);
 				System.out.println("Fim do algoritmo");
 			}
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		int sizePopulation = 10, maxInteration = 10, repetition = 10;
-		new PSO(sizePopulation, maxInteration, 1);
+		int sizePopulation = 10, maxInteration = 10, repetition = 1;
+		new PSO(sizePopulation, maxInteration, repetition);
 	}
 
 }

@@ -42,29 +42,32 @@ public class Update {
 		particle.setPosition(pPositions);
 
 		ResultClassification resultClassification = Fitness.getClassification(particle, classifier);
-		particle.setFitness(resultClassification.getPctCorrect());
+		particle.setFitness(resultClassification.getErrorMLP());
 		particle.setFAR(resultClassification.getFAR());
 		particle.setFRR(resultClassification.getFRR());
 		particle.setErrorMLP(resultClassification.getErrorMLP());
+		particle.setPctCorrect(resultClassification.getPctCorrect());
 
-		if (particle.getFitnesspBest() < particle.getFitness()) {
+		if (particle.getFitnesspBest() > particle.getFitness()) {
 			particle.setpBest(pPositions);
 			particle.setFitnesspBest(particle.getFitness());
 			particle.setFAR(particle.getFAR());
 			particle.setFRR(particle.getFRR());
+			particle.setPctCorrect(particle.getPctCorrect());
 		}
 
 	}
 
 	public static void updatePopulation(List<Particle> population) {
-		Collections.sort(population, Collections.reverseOrder());
-		if (population.get(0).getFitnessgBest() < population.get(0).getFitness()
+		Collections.sort(population);
+		if (population.get(0).getFitnessgBest() > population.get(0).getFitness()
 				|| population.get(0).getFitnessgBest() == 0)
 			for (int i = 0; i < population.size(); i++) {
 				population.get(i).setgBest(population.get(0).getPosition());
 				population.get(i).setFitnessgBest(population.get(0).getFitness());
 				population.get(i).setgBestFAR(population.get(0).getFAR());
 				population.get(i).setgBestFRR(population.get(0).getFRR());
+				population.get(i).setPctCorrectgBest(population.get(0).getPctCorrect());
 			}
 	}
 
