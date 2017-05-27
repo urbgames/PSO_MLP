@@ -24,6 +24,7 @@ public final class Classification {
 	}
 
 	public ResultClassification getFitnessClafissation(Particle particle) throws Exception {
+		classifier = new MultilayerPerceptron();
 		classifier.setLearningRate(particle.getPosition()[0]);
 		classifier.setMomentum(particle.getPosition()[1]);
 		classifier.setTrainingTime((int) particle.getPosition()[2]);
